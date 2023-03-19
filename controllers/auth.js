@@ -20,11 +20,13 @@ const login = async(req,res) => {
     if(!exists){
         return res.status(401).send({error: "User with the email doesn't exists"})
     }
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, exists.password);
     if(!isMatch){
         return res.status(401).send({error: "password doesn't match"})
     }
-    const token = jwt.sign({userId: user._id}, process.env.JWT_SECRET);
+    const token = jwt.sign({userId: exists._id}, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRES_IN,
+      });
     return res.status(200).send({token})
 }
 

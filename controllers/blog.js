@@ -5,7 +5,8 @@ const createBlogs = async (req, res) => {
     const { title, content, author } = req.body;
     const exists = await BlogPost.findOne({ title, author });
     if (exists == null) {
-      const blogPost = new BlogPost({ title, content, author });
+      const userId = req.user.userId;
+      const blogPost = new BlogPost({ title, content, author, userId });
       await blogPost.save();
       res.status(200).send(blogPost);
     } else {
@@ -79,8 +80,12 @@ const updateBlog = async (req, res) => {
     const dataToUpdate = req.body;
     const exists = await BlogPost.find({ _id: id });
     if (exists.length == 0) {
-      res.status(404).send({ message: "Record not found" });
+      res.status(404).send({ message: "Blog not found" });
     } else {
+      const id  = (exists[0].userId).toString()
+      if (id != req.user.userId) {
+       return res.status(400).send({ error: "You can't edit this Blog" });
+      }
       await BlogPost.updateOne({ _id: id }, { $set: dataToUpdate });
       res.status(200).send({ message: "Record Updated Successfully" });
     }
@@ -93,7 +98,6 @@ const deleteBlog = async (req, res) => {
   try {
     const id = req.params.id;
     const exists = await BlogPost.find({ _id: id });
-    console.log({exists})
     if (exists.length == 0) {
       res.status(404).send({ message: "Blog not found" });
     } else {

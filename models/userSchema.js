@@ -2,25 +2,29 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
-    username: {
+    email: {
       type: String,
       required: true,
       unique: true,
     },
-    password: {
+    password:{
       type: String,
-      required: true,
-      validate: [
-        function (password) {
-          return password === this.confirmPassword;
-        },
-        "Passwords do not match",
-      ],
-    },
-    confirmPassword: {
-      type: String,
-      required: true,
-    },
+      required: true
+    }
+    // password: {
+    //   type: String,
+    //   required: true,
+    //   validate: [
+    //     function (password) {
+    //       return password === this.confirmPassword;
+    //     },
+    //     "Passwords do not match",
+    //   ],
+    // },
+    // confirmPassword: {
+    //   type: String,
+    //   required: true,
+    // },
   },
   {
     timestamps: true,
